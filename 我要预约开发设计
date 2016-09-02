@@ -1,0 +1,52 @@
+[我要预约] 开发设计
+一,数据库建模
+消费者-客户表:sdf00504
+商家-运营商表:ctl00501
+运营商登录表: ctl09003
+技师-员工表:ctl00801
+服务项-产品表:ctl03001
+二,客户端
+2.1 客户登录
+用户输入手机号,密码(可以为空),进入我要预约界面。获取该用户注册过的店面.默认选中第一家店面,进入店面预约
+2.2 客户注册
+消费者扫描指定二维码进入注册页面,二维码中带有运营商的编码,js自动存储到cookie中,注册页面由后台跳转,跳转时在后台获取图形验证码的字母并放入到页面中,用户只需要输入手机号和短信验证码即可完成注册(注册密码默认为空)	
+2.3 客户个人中心
+客户可以修改昵称,性别,上传头像
+2.4 预约
+用户进入店面选择服务,技师,预约时间,点击立即预约,商家处理成功后,客户可以去消息中心查看商家反馈信息
+
+三,商家端
+3.1 商家端登录
+用户输入用户名和密码后点击登录,后台验证登录人员权限,进入商家端后台
+3.2 商家端注册
+用户输入用户名,密码后根据手机短信验证码进行注册,注册成功跳转到登录页面,注册数据同时写入到运营商表中和员工表中
+3.3 商家端后台
+1.商家通过消息列表查看消费者预约信息，并在与消费者联系后更新消息内容，商家可以更新消费者的服务项，技师，时间，并给客户发送微信消息
+2. 商家自助增加技师洗头工等成员，根据职务进行区分，并可以设置该技师是否对外展示
+3. 商家内部成员按照职务进行区分，服务项目由系统统一设定提供logo，商家直接选择提供的服务
+
+
+数据表
+---我要预约
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[t_reservation]') AND type in (N'U'))
+DROP TABLE [dbo].[ t_reservation]
+GO
+CREATE TABLE [dbo].[ t_reservation](
+	[seeds_id] [int] IDENTITY(1,1) NOT NULL,
+	[com_id] [char](10) NOT NULL,--商家(运营商)编号
+	[ivt_oper_listing] [varchar](30) NOT NULL,--预约编号
+	[customer_id] [varchar](30) NOT NULL,-- 消费者编号
+	[item_id] [varchar](30) NOT NULL,-- 服务编号
+	[clerk_id] [varchar](30) NOT NULL,-- 技师编号
+	[m_flag] [char](1) NOT NULL,--  状态标识 3客户取消,0未确认,1商家确认,2.已过期
+	[reservation_time] [datetime] NOT NULL,--预约时间 
+	[mainten_clerk_id] [varchar](35) NULL,-- 记录修改成员编码
+	[mainten_datetime] [datetime] NULL --记录修改时间
+	
+	CONSTRAINT [PK_t_reservation] PRIMARY KEY CLUSTERED 
+(
+	[seeds_id] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
